@@ -64,8 +64,10 @@ import {
 import { demarrerFirebase, VERSION_SDK_FIREBASE } from './firebase-init.js';
 import { afficherMessage, afficherVue, effacerMessages, element, vueActuelle } from './interface.js';
 import { messageErreur } from './messages-erreur.js';
-
-const VERSION_APP = '0.21.0';
+import { demarrerMisesAJour } from './mises-a-jour.js';
+// Numéro de version : dans js/version.js, égal à celui de service-worker.js
+// (décision 96).
+import { VERSION_APP } from './version.js';
 
 // Bouton retour du téléphone (décision 75) : pour chaque écran secondaire, le
 // bouton de l'écran qui fait déjà « revenir » (flèche ←, « Annuler »…). Le
@@ -740,10 +742,24 @@ function brancherNavigation() {
 
 // ---------- Démarrage ----------
 
+// Vrai si MinStock est ouverte comme application installée (plein écran,
+// sans barre d'adresse), et non dans un onglet du navigateur.
+function estApplicationInstallee() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+}
+
 async function demarrer() {
   element('version').textContent =
     `Version ${VERSION_APP} — SDK Firebase ${VERSION_SDK_FIREBASE}`;
   element('parametres-version').textContent = element('version').textContent;
+
+  // Copie hors ligne et bandeau « Nouvelle version disponible » (phase 10),
+  // indépendants de Firebase.
+  demarrerMisesAJour();
+  // Aide « Installer MinStock » de Paramètres (décision 95) : inutile dans
+  // l'application déjà installée.
+  element('bloc-installation').hidden = estApplicationInstallee();
 
   try {
     firebase = await demarrerFirebase();

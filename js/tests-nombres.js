@@ -18,6 +18,21 @@ import {
   prixPourSaisie,
   quantitePourSaisie
 } from './nombres.js';
+import { VERSION_APP } from './version.js';
+
+// Numéro de version écrit dans service-worker.js, lu sur le serveur : il doit
+// être égal à celui de js/version.js (décision 96).
+async function versionDuServiceWorker() {
+  try {
+    const reponse = await fetch('./service-worker.js', { cache: 'no-store' });
+    const trouve = (await reponse.text()).match(/const VERSION = '([^']+)'/);
+    return trouve ? trouve[1] : 'introuvable';
+  } catch (erreur) {
+    return 'erreur : ' + erreur.message;
+  }
+}
+
+const VERSION_SERVICE_WORKER = await versionDuServiceWorker();
 
 const refus = (raison) => ({ ok: false, raison });
 const accepte = (valeur) => ({ ok: true, valeur });
@@ -239,7 +254,10 @@ const ESSAIS = [
     'Date et heure : 01/01/2027 à 12:00 AM (minuit)',
     () => formaterDateHeure(new Date(2027, 0, 1, 0, 0)),
     '01/01/2027 à 12:00 AM'
-  ]
+  ],
+
+  // Version identique dans js/version.js et service-worker.js (décision 96).
+  ['Version : service-worker.js égale à js/version.js', () => VERSION_SERVICE_WORKER, VERSION_APP]
 ];
 
 function lancer() {

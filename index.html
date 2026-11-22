@@ -6,6 +6,11 @@
   <title>MinStock</title>
   <meta name="theme-color" content="#ece9e4">
   <link rel="icon" href="./images/logo-minstock.svg" type="image/svg+xml">
+  <!-- Application installable (phase 10, décision 94) -->
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./images/icones/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-title" content="MinStock">
+  <meta name="description" content="Gestion de stock simple pour un entrepôt. Pensée par Kinder Saint Franc, programmée avec Claude Code.">
   <link rel="preload" href="./vendor/polices/montserrat-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./css/style.css">
 </head>
@@ -59,6 +64,12 @@
         Cet indicateur est approximatif : par exemple, sur un Wi-Fi sans
         Internet, il peut mettre quelques secondes à afficher « Hors ligne ».
       </p>
+    </div>
+    <!-- Nouvelle version (phase 10, décision 97) : rien ne change tant que
+         « Mettre à jour » n'est pas touché. -->
+    <div id="bandeau-mise-a-jour" class="bandeau-mise-a-jour" role="status" hidden>
+      <p>Nouvelle version disponible</p>
+      <button type="button" id="bouton-mettre-a-jour" class="bouton-mise-a-jour">Mettre à jour</button>
     </div>
   </header>
 
@@ -543,6 +554,30 @@
         <button type="button" id="bouton-exporter" class="bouton bouton-principal">Exporter le stock (Excel)</button>
       </div>
 
+      <!-- Installer MinStock (phase 10, décision 95) : caché dans
+           l'application déjà installée. -->
+      <div id="bloc-installation" class="bloc-parametres">
+        <h3>Installer MinStock</h3>
+        <p class="aide">
+          Ajoutez MinStock à l'écran d'accueil : elle s'ouvrira en plein écran,
+          et même sans Internet. Dans le menu de votre navigateur (les noms
+          varient un peu selon la version)&nbsp;:
+        </p>
+        <ul class="liste-installation">
+          <li><strong>Chrome</strong>&nbsp;: menu&nbsp;⋮ › «&nbsp;Installer l'application&nbsp;» ou «&nbsp;Ajouter à l'écran d'accueil&nbsp;».</li>
+          <li><strong>Samsung Internet</strong>&nbsp;: menu&nbsp;≡ › «&nbsp;Ajouter la page à&nbsp;» › «&nbsp;Écran d'accueil&nbsp;».</li>
+          <li><strong>Edge</strong>&nbsp;: menu&nbsp;… › «&nbsp;Ajouter au téléphone&nbsp;».</li>
+          <li><strong>Firefox</strong>&nbsp;: menu&nbsp;⋮ › «&nbsp;Installer&nbsp;».</li>
+          <li><strong>iPhone (Safari)</strong>&nbsp;: bouton Partager › «&nbsp;Sur l'écran d'accueil&nbsp;».</li>
+          <li><strong>Ordinateur (Chrome ou Edge)</strong>&nbsp;: icône d'installation à droite de la barre d'adresse.</li>
+        </ul>
+        <p class="aide">
+          Lien reçu par WhatsApp ou par e-mail&nbsp;: ouvrez-le d'abord dans
+          votre navigateur (menu › «&nbsp;Ouvrir dans Chrome&nbsp;», par exemple),
+          puis installez.
+        </p>
+      </div>
+
       <form id="formulaire-nom-entrepot" class="bloc-parametres" novalidate>
         <h3>Nom de l'entrepôt</h3>
         <label for="parametres-nom">Nouveau nom</label>
@@ -593,6 +628,8 @@
       </div>
 
       <p id="parametres-version" class="aide parametres-version"></p>
+      <!-- Mention demandée par le propriétaire (décision 98) -->
+      <p class="aide mention-auteur">Pensée par Kinder&nbsp;Saint&nbsp;Franc, programmée avec Claude&nbsp;Code</p>
     </section>
 
     <!-- Supprimer mon compte : explication et double confirmation (phase 7) -->
@@ -942,6 +979,8 @@
 
   <footer class="pied">
     <p id="version"></p>
+    <!-- Mention demandée par le propriétaire (décision 98) -->
+    <p class="mention-auteur">Pensée par Kinder&nbsp;Saint&nbsp;Franc, programmée avec Claude&nbsp;Code</p>
   </footer>
 
   <!-- Bon imprimable d'un mouvement (étape 9b, décisions 89 à 91) : rempli

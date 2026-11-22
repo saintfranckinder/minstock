@@ -2,6 +2,8 @@
 
 Application web de gestion de stock pour un entrepôt, utilisable sur ordinateur et smartphone, y compris avec une connexion Internet instable.
 
+Pensée par Kinder Saint Franc, programmée avec Claude Code (décision 98).
+
 Le projet est en cours de construction. L'avancement est suivi dans `PLAN.md`.
 
 ## Ce que l'application fait pour l'instant
@@ -22,6 +24,16 @@ Le projet est en cours de construction. L'avancement est suivi dans `PLAN.md`.
 - Carnet de clients : même fonctionnement que les fournisseurs, pour les clients réguliers (« VIP » s'écrit dans les notes).
 - Indicateur de synchronisation en haut de l'écran ; avertissement avant de se déconnecter s'il reste des modifications non envoyées ; effacement des données de l'appareil (appareil partagé).
 - Accueil épuré : une ligne par produit, fiche du produit dans un panneau qui monte du bas, barre de navigation en bas (Stock, Mouvements, Fournisseurs, Clients), Paramètres derrière l'icône ⚙.
+- S'installer sur le téléphone comme une application (icône MinStock, plein écran) et se rouvrir sans Internet après une première visite (phase 10).
+
+## Application installable et mises à jour (phase 10)
+
+- **Installer :** depuis le menu du navigateur ; les étapes pour Chrome, Samsung Internet, Edge, Firefox, Safari sur iPhone et l'ordinateur sont dans Paramètres, bloc « Installer MinStock » (décision 95). Il n'y a pas de bouton « Installer » dans l'application : il ne marcherait que dans certains navigateurs. Un lien reçu par WhatsApp s'ouvre d'abord dans le navigateur.
+- **Sans Internet :** après une première ouverture avec Internet, l'application se rouvre en mode avion, export Excel et bon imprimable compris. Le service worker (`service-worker.js`) garde seulement les fichiers de l'application ; il ne garde jamais les échanges avec Firebase : les données restent gérées par la mémoire hors ligne de Firebase, comme avant (décision 96).
+- **Mises à jour :** après un **Push origin**, les téléphones téléchargent la nouvelle version en arrière-plan et affichent le bandeau **« Nouvelle version disponible »** ; elle ne s'applique que quand on touche **« Mettre à jour »** (jamais de rechargement automatique). Une application complètement fermée puis rouverte s'ouvre directement dans la nouvelle version (décision 97).
+- **Données mobiles :** les bibliothèques (Firebase, Excel, police : environ 2 Mo) ne sont téléchargées qu'une fois ; une mise à jour ne reprend que les fichiers de l'application (environ 400 Ko).
+- **À chaque publication (pour l'assistant) :** changer le numéro de version dans `js/version.js` **et** dans `service-worker.js` (`tests-nombres.html` vérifie qu'ils sont égaux) ; ajouter à la liste de `service-worker.js` tout nouveau fichier de l'application ; changer `BIBLIOTHEQUES` dans `service-worker.js` si un fichier de `vendor/` change.
+- **Essais sur cet ordinateur :** la copie gardée par le service worker cache les modifications tant que le numéro de version ne change pas. Pour voir une modification sans changer de version : dans la console du navigateur, désinscrire le service worker et effacer les caches, puis recharger. Les pages de test (`tests-*.html`) lisent toujours les fichiers sur le serveur.
 
 ## Identité visuelle
 
@@ -269,7 +281,10 @@ Une adresse e-mail correspond toujours à un seul compte et aux mêmes données.
 | Élément | Rôle |
 |---|---|
 | `index.html`, `css/`, `js/` | L'application |
-| `images/` | Symbole du logo MinStock (SVG) |
+| `images/` | Symbole du logo MinStock (SVG) ; `images/icones/` : icônes PNG de l'application installée (192, 512, « maskable » 512, iPhone 180) |
+| `manifest.webmanifest` | Nom, icônes et couleurs de l'application installée (phase 10) |
+| `service-worker.js` | Copie des fichiers de l'application pour l'ouverture sans Internet, et mises à jour (phase 10) |
+| `js/version.js`, `js/mises-a-jour.js` | Numéro de version ; inscription du service worker et bandeau « Nouvelle version disponible » |
 | `js/firebase-config.js` | L'adresse du projet Firebase (ce n'est pas un mot de passe) |
 | `vendor/` | Bibliothèques et police copiées dans le projet (Firebase, SheetJS, Montserrat) : voir `vendor/LISEZMOI.md` |
 | `firestore.rules` | Règles de sécurité de la base de données |
@@ -298,7 +313,8 @@ Sur GitHub Pages, le fichier vide `.nojekyll` doit rester à la racine : sans lu
 
 - **Mémoire hors ligne :** elle dépend du navigateur. Si le navigateur bloque l'enregistrement de données sur l'appareil, l'application affiche un avertissement. En navigation privée, les navigateurs récents acceptent d'enregistrer mais effacent tout à la fermeture, et l'application ne peut pas le détecter : ne pas utiliser la navigation privée.
 - **Première connexion sur un appareil :** elle demande Internet, pour se connecter et pour charger l'entrepôt une première fois.
-- **Réouverture sans Internet :** pas encore possible. Elle sera ajoutée avec l'installation sur téléphone (phase 10).
+- **Réouverture sans Internet :** possible depuis la phase 10, après une première ouverture avec Internet dans ce navigateur. Elle a été essayée sur l'ordinateur (serveur arrêté) ; l'essai en mode avion sur le téléphone est à faire. Dans un navigateur sans service worker, l'application marche comme avant, sans réouverture hors ligne.
+- **Application installée :** la connexion avec Google dans l'application installée est à essayer sur le téléphone (la connexion par e-mail et mot de passe reste possible). iPhone et Firefox non essayés.
 - **Adresse e-mail non vérifiée :** l'inscription ne demande pas de confirmer l'adresse par e-mail. Une faute de frappe dans l'adresse empêche de recevoir l'e-mail de « Mot de passe oublié ».
 - **Suppression du compte et quota :** chaque élément effacé compte comme une écriture (limite gratuite : 20 000 par jour pour toute l'application). Un très gros entrepôt peut finir de s'effacer le lendemain ; la reprise est automatique.
 - **Suppression du compte, cas rare :** si les données sont effacées mais que la toute dernière étape (le compte de connexion) échoue, le même appareil propose de terminer à la connexion suivante ; sur un autre appareil, le compte apparaît vide, avec « Créer votre entrepôt ».
@@ -315,7 +331,7 @@ Sur GitHub Pages, le fichier vide `.nojekyll` doit rester à la racine : sans lu
 - **Fournisseurs modifiés sans Internet :** ils ne sont pas suivis par la liste des « Opérations refusées ». Le formulaire vérifie exactement les mêmes limites que les règles, donc un refus ne devrait pas arriver. Si un fournisseur est supprimé sur un appareil pendant qu'un autre, hors ligne, le modifie, la modification est perdue et le fournisseur reste supprimé. Pour le même fournisseur modifié sur deux appareils, la dernière modification arrivée au serveur l'emporte.
 - **Fournisseur supprimé :** aucun retour en arrière possible, sauf à retrouver ses coordonnées dans un export Excel fait avant.
 - **Bon imprimable :** le nom du fichier PDF proposé reprend le titre et la référence du bon sur ordinateur ; sur téléphone, il dépend du navigateur. Le code SKU n'est pas imprimé pour un produit archivé. Une impression lancée sans le bouton (Ctrl+P) imprime l'écran comme avant. Pas essayé sur iPhone.
-- **Export Excel sans Internet :** jusqu'à la phase 10 (application installable), il peut échouer si la bibliothèque Excel n'a jamais été chargée sur l'appareil, ou n'est plus dans la mémoire du navigateur. Fait sans Internet, le fichier peut aussi être incomplet (l'application prévient).
+- **Export Excel sans Internet :** depuis la phase 10, la bibliothèque Excel est gardée par le service worker, donc l'export marche sans Internet. Fait sans Internet, le fichier peut être incomplet (l'application prévient).
 - **Export Excel, mise en forme :** pas de titres en gras ni de couleurs (la version gratuite de la bibliothèque SheetJS ne les écrit pas) ; les largeurs de colonnes et les flèches de filtre sont présentes.
 - **Export Excel sur iPhone :** non essayé ; sur Safari, le téléchargement d'un fichier peut s'ouvrir dans un aperçu au lieu d'aller dans « Fichiers ».
 - **Appareil partagé :** pour permettre l'utilisation sans Internet, le navigateur garde une copie des données déjà consultées (produits, mouvements, fournisseurs), **même après « Se déconnecter »**. L'application ne les montre plus, mais une personne qui sait fouiller dans le navigateur pourrait les lire. Utiliser l'application seulement sur ses propres appareils, verrouillés par un code ; sur un appareil partagé, utiliser « Effacer les données de cet appareil et me déconnecter » dans Paramètres.
