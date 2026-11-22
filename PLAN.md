@@ -1171,6 +1171,8 @@ Constats :
 - Pendant les essais sur l'ordinateur, la copie du service worker cache les modifications tant que le numéro de version ne change pas (section 8.5, point 23).
 - `tests-regles.html` n'a pas d'icône d'onglet (`favicon.ico` introuvable, 404 sans gravité, ancien).
 
+**Premier essai du propriétaire (2026-11-22, Chrome sur Moto G Stylus 2024, capture fournie) :** l'installation affiche « Install and create shortcut » avec « This app is already installed — Click to open the app instead », alors que le propriétaire ne voit pas l'application ; l'appui donne « could not open app ». Vérifié le même jour : le site en ligne publie bien la version 0.22.0 (`service-worker.js` et `js/version.js`), `manifest.webmanifest` (`application/manifest+json`) et les quatre icônes (`image/png`). Cause probable côté Chrome : l'application installée (WebAPK, fabriquée par Google en arrière-plan) est en cours d'installation, a échoué, ou n'est que dans la liste de toutes les applications. Étapes données au propriétaire : chercher « MinStock » dans la liste des applications et dans Paramètres › Applications ; sinon redémarrer le téléphone et réinstaller ; secours : « Create shortcut » (raccourci qui ouvre le site dans Chrome, avec la copie hors ligne). Résultat attendu.
+
 ### Phase 11 : données de démonstration
 - **Résultat :** bouton visible seulement si l'entrepôt est vide ; un lot par produit, par le même chemin que les vraies opérations.
 - **Tests :** bouton absent dès qu'un produit existe ; historique cohérent avec les quantités.
