@@ -83,6 +83,16 @@ Dans l'historique, chaque opération propose « Annuler cette opération ». Une
 - Une opération ne peut être annulée qu'une fois. Si on l'annule sur deux appareils, le serveur refuse la seconde fois et l'application l'indique : rien n'est compté deux fois.
 - Le bouton n'apparaît pas sur une annulation (une annulation ne s'annule pas : refaire l'opération voulue), sur une opération déjà annulée, sur une opération encore « En attente de synchronisation », ni sur un produit archivé.
 
+### Imprimer le bon d'une opération (étape 9b)
+
+Chaque ligne de l'historique a un bouton **« Imprimer »**, en haut à droite. Il ouvre la fenêtre d'impression du navigateur : choisir une imprimante, ou **« Enregistrer au format PDF »** pour garder le bon ou l'envoyer (par exemple par WhatsApp).
+
+- **Un bon = une opération = un produit :** « Bon d'entrée », « Bon de sortie » ou « Ajustement de stock ».
+- **Sur le bon :** le nom de l'entrepôt, une référence courte (8 caractères ; `A-…` pour une annulation), la date et l'heure de l'opération, le produit avec son code SKU actuel (si le produit n'est pas archivé), la quantité avec l'unité, le motif, et deux zones de signature (« Remis par » et « Reçu par » ; « Établi par » et « Vérifié par » pour un ajustement). Une opération annulée, ou pas encore confirmée par le serveur, porte une mention encadrée.
+- **Le fournisseur ou le client :** écrire son nom dans le motif (par exemple « Livraison Komès Nò ») ; il apparaît sur le bon.
+- **Pas de prix** sur le bon : le mouvement ne garde pas le prix du jour.
+- La mise en page est faite pour le papier (A4 ou Letter, au choix dans la fenêtre d'impression) : le bon est le même depuis un téléphone, un portable ou un ordinateur. Le bon ne fait que lire l'historique : il fonctionne sans Internet et ne change rien aux données.
+
 ### Comment un mouvement est protégé
 
 Chaque opération part dans un seul envoi qui contient le changement de quantité et la ligne d'historique. Le serveur vérifie que le mouvement est nouveau, que le produit le désigne, et que la quantité a changé exactement de la valeur du mouvement. Sinon, il refuse tout. Si le même envoi arrive deux fois après une coupure, le second est refusé : rien n'est compté deux fois.
@@ -264,6 +274,7 @@ Une adresse e-mail correspond toujours à un seul compte et aux mêmes données.
 | `tests-regles.html` | Page de test des règles de sécurité |
 | `tests-nombres.html` | Page de test des conversions de nombres |
 | `js/export-excel.js` | Export Excel (phase 9) : lit les données et crée le fichier, avec SheetJS chargé seulement au moment de l'export |
+| `js/bon-mouvement.js` | Bon imprimable d'un mouvement (étape 9b) : construit le bon et ouvre la fenêtre d'impression |
 | `demarrer.bat`, `outils/` | Serveur local pour tester sur cet ordinateur |
 | `.nojekyll` | Fichier vide, à garder : demande à GitHub Pages de publier tous les fichiers tels quels (décision 41) |
 | `CLAUDE.md` | Cahier des charges |
@@ -301,6 +312,7 @@ Sur GitHub Pages, le fichier vide `.nojekyll` doit rester à la racine : sans lu
 - **Produit renommé :** l'historique garde le nom du produit au moment de chaque opération.
 - **Fournisseurs modifiés sans Internet :** ils ne sont pas suivis par la liste des « Opérations refusées ». Le formulaire vérifie exactement les mêmes limites que les règles, donc un refus ne devrait pas arriver. Si un fournisseur est supprimé sur un appareil pendant qu'un autre, hors ligne, le modifie, la modification est perdue et le fournisseur reste supprimé. Pour le même fournisseur modifié sur deux appareils, la dernière modification arrivée au serveur l'emporte.
 - **Fournisseur supprimé :** aucun retour en arrière possible, sauf à retrouver ses coordonnées dans un export Excel fait avant.
+- **Bon imprimable :** le nom du fichier PDF proposé reprend le titre et la référence du bon sur ordinateur ; sur téléphone, il dépend du navigateur. Le code SKU n'est pas imprimé pour un produit archivé. Une impression lancée sans le bouton (Ctrl+P) imprime l'écran comme avant. Pas essayé sur iPhone.
 - **Export Excel sans Internet :** jusqu'à la phase 10 (application installable), il peut échouer si la bibliothèque Excel n'a jamais été chargée sur l'appareil, ou n'est plus dans la mémoire du navigateur. Fait sans Internet, le fichier peut aussi être incomplet (l'application prévient).
 - **Export Excel, mise en forme :** pas de titres en gras ni de couleurs (la version gratuite de la bibliothèque SheetJS ne les écrit pas) ; les largeurs de colonnes et les flèches de filtre sont présentes.
 - **Export Excel sur iPhone :** non essayé ; sur Safari, le téléchargement d'un fichier peut s'ouvrir dans un aperçu au lieu d'aller dans « Fichiers ».

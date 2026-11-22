@@ -1357,6 +1357,58 @@ body.connecte .pied {
   font-weight: 700;
 }
 
+/* Haut d'une ligne de l'historique : nom du produit à gauche, bouton
+   « Imprimer » à droite (étape 9b, décision 91). Le bouton est une pastille
+   bleu clair, comme les boutons de contact (décision 77), placée à la même
+   distance du haut et du bord droit de la carte. */
+.mouvement-entete {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.mouvement-entete h4 {
+  flex: 1;
+  min-width: 0;
+  padding-top: 0.125rem;
+}
+
+.bouton-imprimer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex: none;
+  min-height: 40px;
+  margin: -0.375rem -0.5rem 0 0;
+  padding: 0 0.875rem 0 0.75rem;
+  background: #e4ebf2;
+  color: var(--accent);
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bouton-imprimer .icone {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.bouton-imprimer:active {
+  background: #d3dfea;
+}
+
+@media (hover: hover) {
+  .bouton-imprimer:hover {
+    background: #d3dfea;
+  }
+}
+
 .bloc-refus {
   margin: 0 0 1rem;
   padding: 0.875rem 1rem 0.25rem;
@@ -1507,6 +1559,215 @@ body.connecte .pied {
 
 .pied p {
   margin: 0;
+}
+
+/* ---------- Bon imprimable (étape 9b, décisions 89 à 91) ---------- */
+
+/* Pensé pour le papier, pas pour l'écran : le même bon depuis un téléphone,
+   un portable ou un ordinateur. Mesures en millimètres et en points.
+   Marges égales, titre centré, colonnes de même largeur ; filets fins aux
+   couleurs de l'identité, sans fond coloré (les navigateurs ne l'impriment
+   pas par défaut). */
+
+/* Invisible à l'écran. */
+.zone-impression {
+  display: none;
+}
+
+/* Pendant l'impression d'un bon (classe posée par js/bon-mouvement.js),
+   seul le bon est imprimé. Une impression lancée autrement reste comme
+   avant. */
+@media print {
+  body.impression-bon {
+    min-height: 0;
+    background: none;
+  }
+
+  body.impression-bon > :not(.zone-impression) {
+    display: none !important;
+  }
+
+  body.impression-bon .zone-impression {
+    display: block;
+  }
+}
+
+/* Page du bon sans marge : le navigateur n'y ajoute ni l'adresse du site ni
+   la date. Les marges sont à l'intérieur du bon. Le format (A4, Letter) se
+   choisit dans la fenêtre d'impression. */
+@page bon {
+  margin: 0;
+}
+
+.bon {
+  page: bon;
+  width: 100%;
+  padding: 18mm 20mm 14mm;
+  color: var(--texte);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.45;
+}
+
+.bon-entete {
+  text-align: center;
+}
+
+.bon-entrepot {
+  margin: 0 0 2.5mm;
+  color: var(--principal);
+  font-family: var(--police-titres);
+  font-size: 9.5pt;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.bon-titre {
+  margin: 0;
+  color: var(--principal);
+  font-family: var(--police-titres);
+  font-size: 22pt;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* Court filet doré centré sous le titre. */
+.bon-titre::after {
+  content: "";
+  display: block;
+  width: 16mm;
+  margin: 5mm auto 0;
+  border-top: 0.6mm solid var(--or);
+}
+
+/* Petits titres : « Référence », « Produit », « Remis par »… */
+.bon-libelle {
+  margin: 0;
+  color: var(--texte-discret);
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Référence et date : deux colonnes égales, séparées au milieu. */
+.bon-infos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 9mm 0 0;
+  border-top: 0.3mm solid #d9d4cc;
+  border-bottom: 0.3mm solid #d9d4cc;
+}
+
+.bon-info {
+  padding: 3.5mm 4mm;
+  text-align: center;
+}
+
+.bon-info + .bon-info {
+  border-left: 0.3mm solid #d9d4cc;
+}
+
+.bon-valeur {
+  margin: 1mm 0 0;
+  font-size: 11pt;
+  font-weight: 700;
+}
+
+/* Opération annulée, ou pas encore confirmée par le serveur. */
+.bon-mention {
+  margin: 6mm 0 0;
+  padding: 3mm 4mm;
+  border: 0.4mm solid var(--alerte-bordure);
+  border-radius: 2mm;
+  color: var(--alerte);
+  font-weight: 700;
+  text-align: center;
+}
+
+.bon-tableau {
+  width: 100%;
+  margin: 9mm 0 0;
+  border-collapse: collapse;
+}
+
+.bon-tableau th {
+  padding: 0 0 2.5mm;
+  border-bottom: 0.4mm solid var(--principal);
+  text-align: left;
+}
+
+.bon-tableau td {
+  padding: 4mm 0;
+  border-bottom: 0.3mm solid #d9d4cc;
+  vertical-align: top;
+}
+
+.bon-tableau .bon-colonne-quantite,
+.bon-tableau .bon-quantite {
+  padding-left: 8mm;
+  text-align: right;
+}
+
+.bon-nom-produit {
+  display: block;
+  font-size: 12pt;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.bon-code {
+  display: block;
+  margin-top: 1mm;
+  color: var(--texte-discret);
+  font-size: 9pt;
+}
+
+.bon-quantite {
+  font-size: 12pt;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.bon-motif {
+  margin: 6mm 0 0;
+}
+
+.bon-texte-motif {
+  margin: 1mm 0 0;
+  overflow-wrap: anywhere;
+}
+
+/* Deux zones de signature de même largeur. */
+.bon-signatures {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16mm;
+  margin: 16mm 0 0;
+  break-inside: avoid;
+}
+
+.bon-signature {
+  text-align: center;
+}
+
+.bon-ligne-signature {
+  margin: 18mm 0 0;
+  padding-top: 1.5mm;
+  border-top: 0.3mm solid var(--texte);
+  color: var(--texte-discret);
+  font-size: 8pt;
+}
+
+.bon-pied {
+  margin: 14mm 0 0;
+  padding-top: 3mm;
+  border-top: 0.3mm solid #d9d4cc;
+  color: var(--texte-discret);
+  font-size: 8pt;
+  text-align: center;
 }
 
 /* ---------- Pages de test ---------- */

@@ -65,7 +65,7 @@ import { demarrerFirebase, VERSION_SDK_FIREBASE } from './firebase-init.js';
 import { afficherMessage, afficherVue, effacerMessages, element, vueActuelle } from './interface.js';
 import { messageErreur } from './messages-erreur.js';
 
-const VERSION_APP = '0.18.0';
+const VERSION_APP = '0.19.0';
 
 // Bouton retour du téléphone (décision 75) : pour chaque écran secondaire, le
 // bouton de l'écran qui fait déjà « revenir » (flèche ←, « Annuler »…). Le
@@ -366,7 +366,7 @@ function surEtatEntrepot(etat) {
     signalerEcoute('entrepot', etat.depuisCache);
     demanderStockagePersistant();
     demarrerEcranProduits(firebase.db, utilisateur.uid, etat.donnees);
-    demarrerEcranMouvements(firebase.db, utilisateur.uid);
+    demarrerEcranMouvements(firebase.db, utilisateur.uid, etat.donnees);
     demarrerEcranParametres(firebase.db, utilisateur.uid, etat.donnees);
     demarrerExport(firebase.db, utilisateur.uid, etat.donnees);
     demarrerEcranFournisseurs(firebase.db, utilisateur.uid);

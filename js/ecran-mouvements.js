@@ -6,7 +6,10 @@
 // mouvements déjà chargés (aucune lecture de plus) et ne change que ce qui est
 // affiché ; les contrôles de l'annulation voient toujours tout l'historique
 // chargé.
+// Bouton « Imprimer » sur chaque ligne (étape 9b, décisions 89 à 91) : bon
+// du mouvement, construit par js/bon-mouvement.js avec ce qui est déjà chargé.
 
+import { effacerBon, imprimerBon } from './bon-mouvement.js';
 import {
   afficherMessage,
   afficherVue,
@@ -51,6 +54,7 @@ const FORMAT_ENTIER = new Intl.NumberFormat('fr-FR');
 const ECART_SYNCHRONISATION_MS = 5 * 60 * 1000;
 
 let contexte = null;             // { db, uid }
+let nomEntrepot = '';            // imprimé en haut des bons
 let produitDuFormulaire = null;  // { id, nom, unite, quantiteMilliemes }
 let arreterEcoute = null;
 
@@ -454,9 +458,69 @@ function boutonAnnuler(mouvement) {
   const bouton = document.createElement('button');
   bouton.type = 'button';
   bouton.className = 'bouton bouton-secondaire';
+  bouton.dataset.action = 'annuler';
   bouton.textContent = 'Annuler cette opération';
   bouton.setAttribute('aria-label', `Annuler cette opération : ${descriptionOperation(mouvement)}`);
   bouton.addEventListener('click', () => annulerOperation(mouvement.id));
+  return bouton;
+}
+
+// ---------- Bon imprimable (étape 9b, décisions 89 à 91) ----------
+
+// Rassemble ce que l'historique sait déjà du mouvement, puis ouvre la
+// fenêtre d'impression. Rien n'est écrit ni lu sur le serveur.
+function imprimerMouvement(idMouvement) {
+  effacerMessages();
+  const mouvement = mouvementsConnus.get(idMouvement);
+  if (!mouvement) {
+    afficherMessage('erreur-historique', 'Cette opération n’est plus dans l’historique affiché.');
+    return;
+  }
+  // Code SKU actuel du produit, s'il est encore dans la liste (non archivé).
+  const produit = produitActif(mouvement.idProduit);
+  const annulation = annulationDe(mouvement);
+  const imprime = imprimerBon({
+    idMouvement: mouvement.id,
+    type: mouvement.type,
+    deltaMilliemes: mouvement.deltaMilliemes,
+    unite: mouvement.unite,
+    nomProduit: mouvement.nomProduit,
+    motif: mouvement.motif,
+    date: mouvement.dateAppareil || mouvement.dateServeur || null,
+    codeSku: produit && produit.codeSku ? produit.codeSku : '',
+    nomEntrepot,
+    annulation: annulation
+      ? { idMouvement: annulation.id, date: annulation.dateAppareil || annulation.dateServeur || null }
+      : null,
+    enAttente: estEnAttente(mouvement)
+  });
+  if (!imprime) {
+    afficherMessage(
+      'erreur-historique',
+      'Ce navigateur ne permet pas d’imprimer. Ouvrez MinStock dans Chrome pour imprimer ce bon.'
+    );
+  }
+}
+
+function boutonImprimer(mouvement) {
+  const bouton = document.createElement('button');
+  bouton.type = 'button';
+  bouton.className = 'bouton-imprimer';
+  bouton.dataset.action = 'imprimer';
+  bouton.setAttribute('aria-label', `Imprimer le bon : ${descriptionOperation(mouvement)}`);
+
+  const icone = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  icone.setAttribute('class', 'icone');
+  icone.setAttribute('aria-hidden', 'true');
+  icone.setAttribute('focusable', 'false');
+  const dessin = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  dessin.setAttribute('href', '#icone-imprimer');
+  icone.append(dessin);
+
+  const texte = document.createElement('span');
+  texte.textContent = 'Imprimer';
+  bouton.append(icone, texte);
+  bouton.addEventListener('click', () => imprimerMouvement(mouvement.id));
   return bouton;
 }
 
@@ -470,9 +534,12 @@ function ligneHistorique(mouvement) {
   // reconstruite (par exemple juste après une annulation).
   article.tabIndex = -1;
 
+  const entete = document.createElement('div');
+  entete.className = 'mouvement-entete';
   const titre = document.createElement('h4');
   titre.textContent = mouvement.nomProduit;
-  article.append(titre);
+  entete.append(titre, boutonImprimer(mouvement));
+  article.append(entete);
 
   article.append(paragraphe(
     'mouvement-variation',
@@ -551,7 +618,8 @@ function afficherHistorique() {
   const actif = document.activeElement;
   const ligneActive = actif && liste.contains(actif) ? actif.closest('li[data-mouvement]') : null;
   const idActif = ligneActive ? ligneActive.dataset.mouvement : null;
-  const surUnBouton = Boolean(ligneActive) && actif.tagName === 'BUTTON';
+  // Bouton qui avait le focus (« imprimer » ou « annuler »), s'il y en avait un.
+  const actionActive = ligneActive && actif.tagName === 'BUTTON' ? actif.dataset.action : null;
 
   liste.textContent = '';
   const mouvements = mouvementsTries();
@@ -574,7 +642,9 @@ function afficherHistorique() {
   if (idActif) {
     const ligne = liste.querySelector(`li[data-mouvement="${CSS.escape(idActif)}"]`);
     if (ligne) {
-      const bouton = surUnBouton ? ligne.querySelector('button') : null;
+      const bouton = actionActive
+        ? ligne.querySelector(`button[data-action="${actionActive}"]`)
+        : null;
       (bouton || ligne).focus({ preventScroll: true });
     }
   }
@@ -667,12 +737,16 @@ export function brancherEcranMouvements() {
   surChangementDesOperations(afficherOperationsRefusees);
 }
 
-// À appeler quand l'entrepôt du compte connecté est connu.
-export function demarrerEcranMouvements(db, uid) {
+// À appeler quand l'entrepôt du compte connecté est connu (ou a changé : son
+// nom est imprimé en haut des bons).
+export function demarrerEcranMouvements(db, uid, entrepot) {
+  nomEntrepot = entrepot && entrepot.nomEntrepot ? entrepot.nomEntrepot : '';
   if (contexte && contexte.uid === uid) {
     return;
   }
+  const nomGarde = nomEntrepot;
   arreterEcranMouvements();
+  nomEntrepot = nomGarde;
   contexte = { db, uid };
   arreterEcoute = surveillerDerniersMouvements(db, uid, surMouvements, surErreurMouvements);
   afficherOperationsRefusees();
@@ -687,6 +761,8 @@ export function arreterEcranMouvements() {
   }
   oublierEcoute('mouvements');
   contexte = null;
+  nomEntrepot = '';
+  effacerBon();
   produitDuFormulaire = null;
   mouvementsConnus.clear();
   idsEnDirect = new Map();
