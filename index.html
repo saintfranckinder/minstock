@@ -800,20 +800,20 @@
         </div>
         <!-- Recherche dans les mouvements déjà chargés (décision 84) -->
         <div id="bloc-recherche-historique" class="recherche" hidden>
-          <label for="recherche-historique" class="lecteur-ecran">Rechercher dans l'historique : produit, type d'opération ou motif</label>
+          <label for="recherche-historique" class="lecteur-ecran">Rechercher dans l'historique : produit, type d'opération, motif ou référence du bon</label>
           <svg class="icone recherche-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <circle cx="11" cy="11" r="7"/>
             <path d="M16.2 16.2L21 21"/>
           </svg>
-          <input id="recherche-historique" type="search" autocomplete="off" enterkeyhint="search" placeholder="Produit, type ou motif">
+          <input id="recherche-historique" type="search" autocomplete="off" enterkeyhint="search" placeholder="Produit, type, motif ou réf.">
         </div>
       </div>
 
       <p class="aide">
         Une opération faite par erreur se corrige avec « Annuler cette
         opération » : l'application enregistre l'opération inverse. Rien n'est
-        effacé. « Imprimer » donne le bon d'une opération, à imprimer ou à
-        enregistrer en PDF.
+        effacé. « Imprimer » donne le bon (papier ou PDF) ; sa référence se
+        retrouve avec la recherche.
       </p>
 
       <p id="erreur-historique" class="message-erreur" role="alert" hidden></p>

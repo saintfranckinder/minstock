@@ -7,7 +7,7 @@
 // avant.
 
 import { element } from './interface.js';
-import { estUneAnnulation, idAnnulation } from './mouvements.js';
+import { referenceBon } from './mouvements.js';
 import { formaterQuantite } from './nombres.js';
 
 const FORMAT_JOUR = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' });
@@ -34,16 +34,6 @@ let titreDeLaPage = null;   // titre à remettre après l'impression
 // « 21/11/2026 à 10:42 »
 function dateEtHeure(date) {
   return `${FORMAT_JOUR.format(date)} à ${FORMAT_HEURE.format(date)}`;
-}
-
-// Référence courte (décision 90) : les 8 premiers caractères de l'identifiant
-// du mouvement, en majuscules ; « A- » suivi de la référence de l'opération
-// annulée pour une annulation. Unique sans compteur, même hors ligne.
-export function referenceDuBon(idMouvement) {
-  if (estUneAnnulation(idMouvement)) {
-    return 'A-' + referenceDuBon(idMouvement.slice(idAnnulation('').length));
-  }
-  return idMouvement.slice(0, 8).toUpperCase();
 }
 
 // Quantité imprimée : sans signe pour une entrée ou une sortie (le titre dit
@@ -85,7 +75,7 @@ function zoneSignature(libelle) {
 //           date (Date ou null), codeSku (ou ''), nomEntrepot,
 //           annulation ({ idMouvement, date }) ou null, enAttente }
 function construireBon(bon) {
-  const reference = referenceDuBon(bon.idMouvement);
+  const reference = referenceBon(bon.idMouvement);
   const article = bloc('article', 'bon');
 
   const entete = bloc('header', 'bon-entete');
@@ -109,7 +99,7 @@ function construireBon(bon) {
     article.append(bloc(
       'p',
       'bon-mention',
-      `Opération annulée${quand} (référence ${referenceDuBon(bon.annulation.idMouvement)}).`
+      `Opération annulée${quand} (référence ${referenceBon(bon.annulation.idMouvement)}).`
     ));
   } else if (bon.enAttente) {
     article.append(bloc(

@@ -12,7 +12,7 @@
 import { collection, getDocs } from '../vendor/firebase-firestore.js';
 import { afficherMessage, element } from './interface.js';
 import { messageErreur } from './messages-erreur.js';
-import { LIBELLES_TYPE, idAnnulation } from './mouvements.js';
+import { LIBELLES_TYPE, idAnnulation, referenceBon } from './mouvements.js';
 import {
   calculerMargeCentimes,
   calculerValeurCentimes,
@@ -172,6 +172,8 @@ function feuilleHistorique(mouvements, produits) {
   const colonnes = [
     { titre: 'Fait le', largeur: 17, format: FORMAT_DATE },
     { titre: 'Reçu par le serveur le', largeur: 21, format: FORMAT_DATE },
+    // Référence imprimée sur le bon de l'opération (décision 92).
+    { titre: 'Référence', largeur: 13 },
     { titre: 'Produit', largeur: 32 },
     { titre: 'Code SKU', largeur: 16 },
     { titre: 'Type', largeur: 12 },
@@ -195,6 +197,7 @@ function feuilleHistorique(mouvements, produits) {
     return [
       dateAppareil ? dateVersSerieExcel(dateAppareil) : null,
       dateServeur ? dateVersSerieExcel(dateServeur) : null,
+      referenceBon(mouvement.id),
       mouvement.nomProduit,
       produit ? texteOuVide(produit.codeSku) : null,
       LIBELLES_TYPE[mouvement.type] || mouvement.type,

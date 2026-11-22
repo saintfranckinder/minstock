@@ -43,6 +43,18 @@ export function estUneAnnulation(idMouvement) {
   return idMouvement.startsWith(PREFIXE_ANNULATION);
 }
 
+// Référence courte d'une opération (décisions 90 et 92) : les 8 premiers
+// caractères de son identifiant, en majuscules ; « A- » suivi de la référence
+// de l'opération annulée pour une annulation. Unique sans compteur, même hors
+// ligne, et rien n'est enregistré : la même opération donne toujours la même
+// référence. Seule fonction qui la calcule (bon, recherche, export).
+export function referenceBon(idMouvement) {
+  if (estUneAnnulation(idMouvement)) {
+    return 'A-' + referenceBon(idMouvement.slice(PREFIXE_ANNULATION.length));
+  }
+  return idMouvement.slice(0, 8).toUpperCase();
+}
+
 // Vrai si l'identifiant d'annulation reste accepté par les règles (toujours
 // le cas pour les identifiants créés par l'application, de 20 caractères).
 export function annulationPossiblePourId(idMouvement) {

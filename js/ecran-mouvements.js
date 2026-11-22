@@ -29,6 +29,7 @@ import {
   estUneAnnulation,
   idAnnulation,
   nouvelIdMouvement,
+  referenceBon,
   surveillerDerniersMouvements
 } from './mouvements.js';
 import {
@@ -584,10 +585,17 @@ function ligneHistorique(mouvement) {
 
 // Recherche (décision 84) : nom du produit, type d'opération (« sortie »…) ou
 // motif, sans tenir compte des majuscules ni des accents.
+// Et la référence du bon (décision 92), à partir de 4 caractères tapés : un
+// mot court comme « riz » ne fait pas apparaître des opérations dont la
+// référence contient ces lettres par hasard.
+const LONGUEUR_MIN_RECHERCHE_REFERENCE = 4;
+
 function correspondALaRecherche(mouvement, recherche) {
   return normaliserPourRecherche(mouvement.nomProduit || '').includes(recherche) ||
     normaliserPourRecherche(LIBELLES_TYPE[mouvement.type] || '').includes(recherche) ||
-    normaliserPourRecherche(mouvement.motif || '').includes(recherche);
+    normaliserPourRecherche(mouvement.motif || '').includes(recherche) ||
+    (recherche.length >= LONGUEUR_MIN_RECHERCHE_REFERENCE &&
+      normaliserPourRecherche(referenceBon(mouvement.id)).includes(recherche));
 }
 
 // Ligne sous la recherche : combien de mouvements trouvés, parmi combien de

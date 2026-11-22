@@ -12,7 +12,7 @@ Le projet est en cours de construction. L'avancement est suivi dans `PLAN.md`.
 - Afficher le texte de confidentialité depuis l'écran de connexion.
 - Ajouter, modifier et archiver un produit : nom, unité, seuil d'alerte, prix d'achat, stock de départ ; et, facultatifs, code SKU, type de stock, quantité à commander, prix de vente (phase 8b).
 - Enregistrer des mouvements de stock : entrée, sortie, ajustement, avec un motif facultatif.
-- Consulter l'historique : les 50 derniers mouvements, puis « Voir plus » ; y chercher par produit, par type d'opération (« sortie »…) ou par motif. La recherche porte sur les mouvements déjà chargés : pour chercher plus loin, touchez « Voir plus » (décision 84). Pour tout l'historique, utilisez l'export Excel.
+- Consulter l'historique : les 50 derniers mouvements, puis « Voir plus » ; y chercher par produit, par type d'opération (« sortie »…), par motif ou par la référence d'un bon (décision 92). La recherche porte sur les mouvements déjà chargés : pour chercher plus loin, touchez « Voir plus » (décision 84). Pour tout l'historique, utilisez l'export Excel.
 - Exporter tout le stock, l'historique, les fournisseurs et les clients dans un fichier Excel (Paramètres > Sauvegarde) : c'est la seule sauvegarde.
 - Annuler une opération faite par erreur, depuis l'historique.
 - Signaler les opérations que le serveur a refusées, même après fermeture de l'application.
@@ -88,7 +88,8 @@ Dans l'historique, chaque opération propose « Annuler cette opération ». Une
 Chaque ligne de l'historique a un bouton **« Imprimer »**, en haut à droite. Il ouvre la fenêtre d'impression du navigateur : choisir une imprimante, ou **« Enregistrer au format PDF »** pour garder le bon ou l'envoyer (par exemple par WhatsApp).
 
 - **Un bon = une opération = un produit :** « Bon d'entrée », « Bon de sortie » ou « Ajustement de stock ».
-- **Sur le bon :** le nom de l'entrepôt, une référence courte (8 caractères ; `A-…` pour une annulation), la date et l'heure de l'opération, le produit avec son code SKU actuel (si le produit n'est pas archivé), la quantité avec l'unité, le motif, et deux zones de signature (« Remis par » et « Reçu par » ; « Établi par » et « Vérifié par » pour un ajustement). Une opération annulée, ou pas encore confirmée par le serveur, porte une mention encadrée.
+- **La référence** : les 8 premiers caractères du numéro unique que l'application donne à chaque opération, en majuscules (par exemple `P2HWJ9HI`) ; pour une annulation, `A-` suivi de la référence de l'opération annulée. Ce n'est pas un compteur (00001, 00002…) : deux téléphones sans Internet ne peuvent pas obtenir la même. La même opération a toujours la même référence. **Pour retrouver une opération à partir d'un bon papier**, tapez sa référence (au moins 4 caractères) dans la recherche de l'historique ; taper `P2HWJ9HI` montre l'opération et son annulation. Elle est aussi dans la colonne « Référence » de la feuille `Historique` de l'export Excel.
+- **Sur le bon :** le nom de l'entrepôt, la référence, la date et l'heure de l'opération, le produit avec son code SKU actuel (si le produit n'est pas archivé), la quantité avec l'unité, le motif, et deux zones de signature (« Remis par » et « Reçu par » ; « Établi par » et « Vérifié par » pour un ajustement). Une opération annulée, ou pas encore confirmée par le serveur, porte une mention encadrée.
 - **Le fournisseur ou le client :** écrire son nom dans le motif (par exemple « Livraison Komès Nò ») ; il apparaît sur le bon.
 - **Pas de prix** sur le bon : le mouvement ne garde pas le prix du jour.
 - La mise en page est faite pour le papier (A4 ou Letter, au choix dans la fenêtre d'impression) : le bon est le même depuis un téléphone, un portable ou un ordinateur. Le bon ne fait que lire l'historique : il fonctionne sans Internet et ne change rien aux données.
@@ -180,7 +181,7 @@ Ce sont des informations sur d'autres personnes : n'enregistrer que ce qui est u
 Contenu (décisions 85 à 88), toujours complet :
 
 - **Stock** : tous les produits, actifs puis archivés (colonne « Archivé ») ; code SKU, type, unité, quantité, seuil, alerte, quantité à commander, prix d'achat, prix de vente, marge, valeur indicative.
-- **Historique** : tous les mouvements, du plus récent au plus ancien ; date de l'opération, date de réception par le serveur, produit, code SKU, type, quantité (avec son signe), unité, motif, statut (« Terminé », « Annulé », « En attente d'envoi »).
+- **Historique** : tous les mouvements, du plus récent au plus ancien ; date de l'opération, date de réception par le serveur, référence (celle du bon imprimé), produit, code SKU, type, quantité (avec son signe), unité, motif, statut (« Terminé », « Annulé », « En attente d'envoi »).
 - **Fournisseurs** et **Clients** : leurs coordonnées et notes.
 
 Dans Excel, la ligne de titres de chaque feuille a des **flèches de filtre** : par exemple, dans « Historique », touchez la flèche de « Produit » et ne cochez que « Riz » pour ne voir que ses mouvements. Les quantités et les montants sont de vrais nombres : Excel peut les additionner.
