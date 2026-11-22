@@ -35,6 +35,7 @@ import {
 import {
   DECIMALES_QUANTITE,
   analyserQuantite,
+  formaterDateHeure,
   formaterQuantite,
   messageNombreRefuse
 } from './nombres.js';
@@ -47,7 +48,6 @@ import {
 } from './operations-en-attente.js';
 import { messageErreur } from './messages-erreur.js';
 
-const FORMAT_DATE = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
 const FORMAT_ENTIER = new Intl.NumberFormat('fr-FR');
 
 // Au-delà de cet écart entre l'heure de l'opération et l'heure de réception
@@ -120,7 +120,7 @@ function afficherOperationsRefusees() {
     texte.textContent = operation.libelle;
     const date = document.createElement('p');
     date.className = 'aide';
-    date.textContent = 'Faite le ' + FORMAT_DATE.format(new Date(operation.dateAppareil));
+    date.textContent = 'Faite le ' + formaterDateHeure(new Date(operation.dateAppareil));
 
     const bouton = document.createElement('button');
     bouton.type = 'button';
@@ -394,23 +394,24 @@ function peutEtreAnnule(mouvement) {
     produitActif(mouvement.idProduit) !== null;
 }
 
-// « Sortie -1 sac — Ciment, faite le 18/11/2026 14:32 »
+// « Sortie -1 sac — Ciment, faite le 18/11/2026 à 2:32 PM »
 function descriptionOperation(mouvement) {
   const libelle = libelleMouvement(
     mouvement.type, mouvement.deltaMilliemes, mouvement.unite, mouvement.nomProduit
   );
   return mouvement.dateAppareil
-    ? `${libelle}, faite le ${FORMAT_DATE.format(mouvement.dateAppareil)}`
+    ? `${libelle}, faite le ${formaterDateHeure(mouvement.dateAppareil)}`
     : libelle;
 }
 
-// Motif de l'annulation : « Annulation : Sortie -1 sac du 18/11/2026 14:32 ».
+// Motif de l'annulation : « Annulation : Sortie -1 sac du 18/11/2026 à 2:32 PM »
+// (décision 93 ; les motifs déjà enregistrés gardent l'ancienne écriture).
 // Le nom du produit est déjà dans le mouvement.
 function motifAnnulation(mouvement) {
   let texte = `Annulation : ${LIBELLES_TYPE[mouvement.type] || mouvement.type} ` +
     `${formaterVariation(mouvement.deltaMilliemes)} ${mouvement.unite}`;
   if (mouvement.dateAppareil) {
-    texte += ` du ${FORMAT_DATE.format(mouvement.dateAppareil)}`;
+    texte += ` du ${formaterDateHeure(mouvement.dateAppareil)}`;
   }
   return texte.slice(0, LONGUEUR_MAX_MOTIF);
 }
@@ -551,7 +552,7 @@ function ligneHistorique(mouvement) {
   // Heure de l'opération (appareil) et heure de réception (serveur) ne
   // sont jamais confondues.
   if (mouvement.dateAppareil) {
-    article.append(paragraphe('', 'Fait le ' + FORMAT_DATE.format(mouvement.dateAppareil)));
+    article.append(paragraphe('', 'Fait le ' + formaterDateHeure(mouvement.dateAppareil)));
   }
   if (estEnAttente(mouvement)) {
     article.append(paragraphe('produit-attente', 'En attente de synchronisation'));
@@ -559,7 +560,7 @@ function ligneHistorique(mouvement) {
       Math.abs(mouvement.dateServeur - mouvement.dateAppareil) > ECART_SYNCHRONISATION_MS) {
     article.append(paragraphe(
       'aide',
-      'Reçu par le serveur le ' + FORMAT_DATE.format(mouvement.dateServeur)
+      'Reçu par le serveur le ' + formaterDateHeure(mouvement.dateServeur)
     ));
   }
   if (mouvement.motif) {
@@ -571,7 +572,7 @@ function ligneHistorique(mouvement) {
     article.append(paragraphe(
       'mouvement-annulee',
       annulation.dateAppareil
-        ? 'Annulée le ' + FORMAT_DATE.format(annulation.dateAppareil)
+        ? 'Annulée le ' + formaterDateHeure(annulation.dateAppareil)
         : 'Annulée'
     ));
   } else if (peutEtreAnnule(mouvement)) {

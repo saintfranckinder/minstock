@@ -190,6 +190,8 @@ Chaque mouvement conserve :
 
 L'interface ne doit pas confondre l'heure de réalisation et l'heure de synchronisation.
 
+Affichage (décision 93) : partout, heure sur 12 heures avec AM ou PM, date et heure écrites « 21/11/2026 à 2:32 PM » par une seule fonction de `js/nombres.js` (`formaterDateHeure`) ; dans l'export Excel, format `dd/mm/yyyy h:mm AM/PM`.
+
 ### Indicateur de synchronisation (approximatif, assumé comme tel)
 
 Firestore pour le Web ne fournit pas d'indicateur fiable de connexion au serveur, et le navigateur peut se croire en ligne sur un Wi-Fi sans Internet. Construire un indicateur simple, sans mécanisme de détection complexe :

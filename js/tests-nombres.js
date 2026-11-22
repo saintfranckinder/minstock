@@ -9,6 +9,9 @@ import {
   calculerValeurTotaleCentimes,
   centimesVersNombre,
   dateVersSerieExcel,
+  formaterDate,
+  formaterDateHeure,
+  formaterHeure,
   formaterMontant,
   formaterQuantite,
   milliemesVersNombre,
@@ -214,7 +217,29 @@ const ESSAIS = [
     () => Math.round(dateVersSerieExcel(new Date(2026, 10, 7, 21, 23, 41)) * 1000000) / 1000000,
     46333.891447
   ],
-  ['Excel : 29/02/2028 (année bissextile)', () => dateVersSerieExcel(new Date(2028, 1, 29)), 46812]
+  ['Excel : 29/02/2028 (année bissextile)', () => dateVersSerieExcel(new Date(2028, 1, 29)), 46812],
+
+  // Date et heure affichées, sur 12 heures avec AM ou PM (décision 93).
+  ['Heure : 14:32 donne 2:32 PM', () => formaterHeure(new Date(2026, 10, 7, 14, 32)), '2:32 PM'],
+  ['Heure : 9:05 donne 9:05 AM', () => formaterHeure(new Date(2026, 10, 7, 9, 5)), '9:05 AM'],
+  ['Heure : minuit 0:05 donne 12:05 AM', () => formaterHeure(new Date(2026, 10, 7, 0, 5)), '12:05 AM'],
+  ['Heure : midi donne 12:00 PM', () => formaterHeure(new Date(2026, 10, 7, 12, 0)), '12:00 PM'],
+  ['Heure : 12:59 donne 12:59 PM', () => formaterHeure(new Date(2026, 10, 7, 12, 59)), '12:59 PM'],
+  ['Heure : 13:00 donne 1:00 PM', () => formaterHeure(new Date(2026, 10, 7, 13, 0)), '1:00 PM'],
+  ['Heure : 23:59 donne 11:59 PM', () => formaterHeure(new Date(2026, 10, 7, 23, 59)), '11:59 PM'],
+  ['Heure : 11:59 donne 11:59 AM', () => formaterHeure(new Date(2026, 10, 7, 11, 59)), '11:59 AM'],
+  ['Date : 07/11/2026 avec des zéros', () => formaterDate(new Date(2026, 10, 7, 14, 32)), '07/11/2026'],
+  ['Date : 31/12/2026', () => formaterDate(new Date(2026, 11, 31, 23, 59)), '31/12/2026'],
+  [
+    'Date et heure : 07/11/2026 à 2:32 PM',
+    () => formaterDateHeure(new Date(2026, 10, 7, 14, 32)),
+    '07/11/2026 à 2:32 PM'
+  ],
+  [
+    'Date et heure : 01/01/2027 à 12:00 AM (minuit)',
+    () => formaterDateHeure(new Date(2027, 0, 1, 0, 0)),
+    '01/01/2027 à 12:00 AM'
+  ]
 ];
 
 function lancer() {

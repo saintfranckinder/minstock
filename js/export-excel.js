@@ -27,7 +27,8 @@ const CHEMIN_SHEETJS = './vendor/xlsx.full.min.js';
 // Formats Excel : Excel les affiche avec les séparateurs de la langue de
 // l'appareil (1 234,50 en français).
 const FORMAT_MONTANT = '#,##0.00';
-const FORMAT_DATE = 'dd/mm/yyyy hh:mm';
+// Heure sur 12 heures avec AM ou PM, comme dans l'application (décision 93).
+const FORMAT_DATE = 'dd/mm/yyyy h:mm AM/PM';
 
 const COMPARATEUR = new Intl.Collator('fr', { sensitivity: 'base', numeric: true });
 const FORMAT_ENTIER = new Intl.NumberFormat('fr-FR');
@@ -170,7 +171,7 @@ function trierMouvements(mouvements) {
 
 function feuilleHistorique(mouvements, produits) {
   const colonnes = [
-    { titre: 'Fait le', largeur: 17, format: FORMAT_DATE },
+    { titre: 'Fait le', largeur: 20, format: FORMAT_DATE },
     { titre: 'Reçu par le serveur le', largeur: 21, format: FORMAT_DATE },
     // Référence imprimée sur le bon de l'opération (décision 92).
     { titre: 'Référence', largeur: 13 },

@@ -182,6 +182,32 @@ export function dateVersSerieExcel(date) {
   return (enUtc - Date.UTC(1899, 11, 30)) / 86400000;
 }
 
+// ---------- Date et heure affichées (décision 93) ----------
+// Écrites ici plutôt que par les formats du navigateur : le résultat est le
+// même sur tous les téléphones et navigateurs. Heure de l'appareil.
+
+function deuxChiffres(nombre) {
+  return String(nombre).padStart(2, '0');
+}
+
+// « 07/11/2026 »
+export function formaterDate(date) {
+  return `${deuxChiffres(date.getDate())}/${deuxChiffres(date.getMonth() + 1)}/${date.getFullYear()}`;
+}
+
+// Sur 12 heures, avec AM ou PM : « 2:32 PM », « 12:05 AM » (minuit),
+// « 12:00 PM » (midi).
+export function formaterHeure(date) {
+  const heures = date.getHours();
+  const sur12 = heures % 12 === 0 ? 12 : heures % 12;
+  return `${sur12}:${deuxChiffres(date.getMinutes())} ${heures < 12 ? 'AM' : 'PM'}`;
+}
+
+// « 07/11/2026 à 2:32 PM »
+export function formaterDateHeure(date) {
+  return `${formaterDate(date)} à ${formaterHeure(date)}`;
+}
+
 // Marge par unité, en centimes (décision 82) : prix de vente moins prix
 // d'achat ; négative si le produit est vendu à perte. Les deux prix sont des
 // entiers d'au plus 10^12 : la soustraction reste exacte.

@@ -8,10 +8,7 @@
 
 import { element } from './interface.js';
 import { referenceBon } from './mouvements.js';
-import { formaterQuantite } from './nombres.js';
-
-const FORMAT_JOUR = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short' });
-const FORMAT_HEURE = new Intl.DateTimeFormat('fr-FR', { timeStyle: 'short' });
+import { formaterDateHeure, formaterQuantite } from './nombres.js';
 
 const TITRES = {
   entree: 'Bon d’entrée',
@@ -31,9 +28,9 @@ const CLASSE_IMPRESSION = 'impression-bon';
 
 let titreDeLaPage = null;   // titre à remettre après l'impression
 
-// « 21/11/2026 à 10:42 »
+// « 21/11/2026 à 10:42 AM » (décision 93)
 function dateEtHeure(date) {
-  return `${FORMAT_JOUR.format(date)} à ${FORMAT_HEURE.format(date)}`;
+  return formaterDateHeure(date);
 }
 
 // Quantité imprimée : sans signe pour une entrée ou une sortie (le titre dit

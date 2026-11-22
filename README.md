@@ -74,10 +74,11 @@ Limite : deux téléphones hors ligne peuvent donner le même code à deux produ
 - Un mouvement apparaît tout de suite. Tant que le serveur ne l'a pas confirmé, la ligne du produit affiche « En attente de synchronisation » à la place de « Achat … » (même hauteur : rien ne bouge), le panneau du produit affiche « en attente » sous la quantité, et l'historique affiche « En attente de synchronisation ».
 - **Arrivage à un nouveau prix :** noter le prix dans le motif de l'entrée (par exemple « Arrivage à 1 200 HTG le sac »), puis corriger le prix d'achat dans la fiche du produit avec « Modifier ». L'application ne calcule pas de coût moyen : la valeur du stock utilise le dernier prix d'achat saisi (décision 71).
 - L'historique est rangé selon l'heure de réception par le serveur. L'heure indiquée « Fait le » est celle de l'appareil au moment de l'opération ; si l'écart dépasse 5 minutes, les deux sont affichées.
+- **Heures avec AM ou PM** (décision 93) : partout (historique, bon imprimé, export Excel), la date et l'heure s'écrivent « 21/11/2026 à 2:32 PM » ; minuit est « 12:00 AM », midi « 12:00 PM ». Les motifs d'annulation enregistrés avant la version 0.21.0 gardent l'ancienne écriture (« 14:32 »).
 
 ### Annuler une opération faite par erreur
 
-Dans l'historique, chaque opération propose « Annuler cette opération ». Une fenêtre de confirmation montre l'opération et le stock prévu après l'annulation, avec un avertissement s'il est négatif. Après confirmation, l'application enregistre l'opération inverse : un ajustement de valeur opposée, dont le motif décrit l'opération annulée (par exemple « Annulation : Sortie -1 sac du 18/11/2026 14:32 »). L'opération d'origine reste dans l'historique, marquée « Annulée le … ». Rien n'est effacé.
+Dans l'historique, chaque opération propose « Annuler cette opération ». Une fenêtre de confirmation montre l'opération et le stock prévu après l'annulation, avec un avertissement s'il est négatif. Après confirmation, l'application enregistre l'opération inverse : un ajustement de valeur opposée, dont le motif décrit l'opération annulée (par exemple « Annulation : Sortie -1 sac du 18/11/2026 à 2:32 PM »). L'opération d'origine reste dans l'historique, marquée « Annulée le … ». Rien n'est effacé.
 
 - L'annulation retire seulement l'effet de cette opération : les opérations faites depuis restent comptées.
 - Une opération ne peut être annulée qu'une fois. Si on l'annule sur deux appareils, le serveur refuse la seconde fois et l'application l'indique : rien n'est compté deux fois.
