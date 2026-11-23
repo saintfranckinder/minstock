@@ -34,7 +34,7 @@ Dépôt GitHub : `saintfranckinder/minstock`, renommé par le propriétaire le 2
 | — | Heure sur 12 heures avec AM ou PM, partout (décision 93) | **Terminée le 2026-11-22** (version 0.21.0 ; `tests-nombres.html` 138 sur 138, tests sur l'ordinateur réussis ; essai sur smartphone réussi le même jour, selon le propriétaire) |
 | 10 | Application installable (PWA) (décisions 94 à 99) | **Terminée le 2026-11-22** (versions 0.22.0 et 0.22.1 ; tests sur l'ordinateur réussis, `tests-nombres.html` 139 sur 139 ; sur le téléphone, selon le propriétaire : installation, mode avion, puis correction de l'ouverture lente et bandeau de mise à jour réussis) ; non confirmée : connexion Google dans l'application installée |
 | 11 | Guide « Premiers pas » à la place des données de démonstration (décision 100) | **Terminée le 2026-11-22** (version 0.23.0, tests sur l'ordinateur réussis ; essai sur le téléphone réussi selon le propriétaire) |
-| 12 | Audit final de sécurité | À faire |
+| 12 | Audit final de sécurité | **Audit fait le 2026-11-22** (rapport présenté au propriétaire ; `tests-regles.html` 121 sur 121, `tests-nombres.html` 139 sur 139) ; choix du propriétaire attendus ; essai à deux appareils à faire |
 | 13 | Documentation et publication finale | À faire |
 
 ## 2. Détail des phases : résultat attendu et tests
@@ -1238,6 +1238,42 @@ Non essayé : la disparition de la carte au moment même où l'on ajoute le prem
 - **Résultat :** rapport classé par gravité (règles, doublons, nombres, suppression, hors ligne, export, mobile, secrets). App Check et autres protections avancées évalués à ce moment.
 - **Tests :** rejouer `tests-regles.html` et `tests-nombres.html` ; test à deux appareils sur le même produit.
 
+**Compte rendu de l'audit (2026-11-22)**
+
+Accord du propriétaire : « Oui lance le, faites aussi un security scan complet ». Analyse faite par l'assistant (lecture du code et des règles, recherches dans Git, vérification du site en ligne, recherche des failles connues des bibliothèques), sans rien modifier.
+
+Vérifié, rien à signaler :
+
+| Point | Constat |
+|---|---|
+| Secrets | Aucun mot de passe de test (valeurs de `.env.test` cherchées dans les 56 fichiers suivis et dans tout l'historique, sans les afficher : 0), aucune clé privée ni jeton (`-----BEGIN`, `ghp_`, `sk-`, `AKIA`… : 0). `.env.test` jamais commité, introuvable sur le site (404). Seule clé : celle de `js/firebase-config.js`, publique par nature. Adresses e-mail du dépôt : fictives (`@example.com`, `@example.org`, `nom@exemple.com`). |
+| Règles Firestore (version 9) | Lues en entier : refus par défaut ; chaque compte ne lit et n'écrit que `users/{son uid}` ; pas de liste des entrepôts ; champs, types et longueurs contrôlés ; quantité liée à un mouvement nouveau de même valeur (`getAfter`) ; mouvements jamais modifiés ; suppressions seulement après la demande de suppression du compte (sauf fournisseurs et clients, décisions 50 et 72). `tests-regles.html` : **121 sur 121** (série habituelle). |
+| Nombres et doublons | `tests-nombres.html` : **139 sur 139** ; identifiant de mouvement fixé avant l'envoi, nouvel envoi refusé par les règles (déjà testé). |
+| Injection de code (XSS) | Aucun `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write`, `eval` ni `new Function` dans `js/` et `service-worker.js` : tous les textes saisis sont posés comme du texte. Liens « Appeler » et « WhatsApp » réduits aux chiffres ; liens externes avec `rel="noopener noreferrer"`. |
+| Export Excel et bon | Textes écrits comme du texte dans le fichier (pas de formule) ; SheetJS sert seulement à écrire, jamais à lire un fichier reçu. Bon construit avec du texte seulement. |
+| Service worker | Ne répond qu'aux fichiers de l'application (même adresse) ; ne garde ni Firebase ni les pages de test ; aucune donnée de l'utilisateur dans ses caches ; messages acceptés : seulement « mettre-a-jour ». |
+| Site en ligne | `http://` redirigé vers `https://` (301) ; HSTS présent (`max-age=31556952`) ; `.env`, `.env.test`, `.git/config` introuvables (404). |
+| Bibliothèques | SheetJS **0.20.3** : après les deux failles connues (CVE-2023-30533, corrigée en 0.19.3, lecture de fichiers ; CVE-2024-22363, corrigée en 0.20.2). Firebase **13.4.0** : après la seule faille connue du SDK web (CVE-2024-11023, corrigée en 10.9.0). Une fiche Red Hat « CVE-2026-85268 » sur Firebase Authentication et Identity Platform n'a pas pu être vérifiée (détails absents) : à revoir en phase 13. Empreintes SHA-256 (16 premiers caractères) : `firebase-app.js` 26673F502611BC7B, `firebase-auth.js` 1B2DB9F0C86387C1, `firebase-firestore.js` 21C40C8F4A05D153, `xlsx.full.min.js` CC015130AA8521E7, `montserrat-latin.woff2` 06B16DB7A969135D. |
+| Limitation des envois au démarrage (décision 99) | Seulement vers les deux serveurs des comptes, seulement pendant le démarrage ; envoi normal remis (vérifié). |
+
+Points relevés, classés par gravité (rien n'est corrigé sans accord) :
+
+| # | Gravité | Point | Proposition |
+|---|---|---|---|
+| 1 | Moyenne | **Inscription ouverte à tous et quota gratuit partagé.** N'importe qui peut créer un compte (il ne voit que ses propres données). Mais tous les comptes partagent le quota gratuit du projet (par jour : 50 000 lectures, 20 000 écritures, 20 000 suppressions) : un abus pourrait rendre MinStock inutilisable jusqu'au lendemain. | Si MinStock est seulement pour le propriétaire (et ses employés) : bloquer la création de comptes dans la console Firebase, créer les comptes soi-même, et retirer « Créer un compte » de l'écran de connexion. Sinon, garder ainsi (risque faible) et surveiller l'utilisation dans la console. **Question posée au propriétaire.** |
+| 2 | Faible à moyenne | **Clé d'API sans restriction** (console Google Cloud). | Limiter la clé aux adresses du site (`saintfranckinder.github.io`, `localhost`, domaine `firebaseapp.com` de la connexion) et aux services utilisés (Identity Toolkit, Token Service, Cloud Firestore). Action du propriétaire dans la console, avec un guide. |
+| 3 | Faible | **Pas de politique de sécurité du contenu (CSP)** : GitHub Pages ne permet pas d'en-têtes ; une balise `<meta>` est possible. Aucun point d'injection trouvé aujourd'hui. | Défense en plus, mais risque de bloquer la fenêtre Google : pas maintenant ; à reconsidérer. |
+| 4 | Faible (confort) | En-tête à 320 pixels : la pastille « Synchronisé » touche ⚙ (ancien). | Petite retouche de style, à proposer. |
+| 5 | Info | Un produit archivé pourrait être désarchivé par un appel direct au serveur (seulement par son propriétaire, sur ses propres données) ; l'application ne le permet pas (décision 23). | Rien à faire. |
+| 6 | Info | Pendant une suppression de compte, une opération de stock faite hors ligne sur un autre appareil pourrait encore arriver dans une fenêtre très courte (les règles des mouvements ne vérifient pas le compte actif) ; elle serait effacée par la suite de la suppression. | Rien à faire pour l'instant. |
+| 7 | Info | Après « Se déconnecter », la copie des données reste sur l'appareil (voulu, décision 67 : « Effacer les données de cet appareil » pour un appareil partagé). | Rien à faire. |
+| 8 | Info | Lien « E-mail » : l'adresse n'est pas encodée ; seul le propriétaire du compte saisit ses propres adresses. | Rien à faire. |
+| 9 | Info | Fichiers de suivi (`PLAN.md`…) et `tests-regles.html` publics (dépôt public) : aucun secret ; la page de test ne marche qu'avec une adresse `@example.com` et ne touche que le compte connecté. | Rien à faire. |
+
+**App Check (évalué) :** pas maintenant. Il chargerait à chaque ouverture des scripts de Google (reCAPTCHA), ce que la décision 99 vient de retirer pour l'ouverture hors ligne ; il demande Internet pour obtenir ses jetons ; les données sont déjà protégées par les règles. À reconsidérer si l'utilisation de la console montre un abus.
+
+Reste à faire : essai à deux appareils sur le même produit (propriétaire) ; connexion Google dans l'application installée (propriétaire) ; vérifications dans la console Firebase (règles publiées en version 9, domaines autorisés, protection contre l'énumération des adresses e-mail, validation en deux étapes du compte Google qui gère Firebase) ; décisions sur les points 1 à 4.
+
 ### Phase 13 : documentation et publication finale
 - **Résultat :** README complet en français (limites connues, sauvegarde par export, paramètres de déploiement, changement d'hébergeur).
 - **Tests :** lien final testé sur ordinateur et smartphone.
@@ -1324,7 +1360,7 @@ Règles de conception retenues pour le code :
 - **Phase 10 (application installable) faite le 2026-11-22** (décisions 94 à 98, version 0.22.0) : tests sur l'ordinateur réussis (copie hors ligne, serveur arrêté, cycle de mise à jour, aide d'installation, mention) ; installation et mode avion réussis sur le téléphone selon le propriétaire, mais ouverture d'environ une minute en mode avion.
 - **Correction de l'ouverture lente sans Internet terminée le 2026-11-22** (décision 99, version 0.22.1) : cause reproduite et corrigée sur l'ordinateur (de « jamais » à 4,5 secondes avec un réseau qui ne répond pas) ; essai sur le téléphone réussi selon le propriétaire (bandeau de mise à jour compris). **Phase 10 terminée.**
 - **Phase 11 terminée le 2026-11-22** (décision 100, version 0.23.0) : guide « Premiers pas » sur l'accueil vide à la place des données de démonstration (option A choisie par le propriétaire) ; tests sur l'ordinateur réussis ; essai sur le téléphone réussi selon le propriétaire.
-- **Prochaine étape : phase 12, audit final de sécurité** (section 2) ; présentée au propriétaire le 2026-11-22, accord attendu ; décisions **101 et suivantes**.
+- **Phase 12 : audit fait le 2026-11-22** (rapport dans le compte rendu de la phase 12, section 2) : rien de grave ; quatre points proposés au propriétaire (inscription ouverte et quota partagé, restriction de la clé d'API, CSP, en-tête à 320 pixels) ; **choix du propriétaire attendus** ; essai à deux appareils à faire ; décisions **101 et suivantes**.
 - **Prochaine étape : phase 10, application installable (PWA).** Rien n'est codé ; explication et questions présentées au propriétaire le 2026-11-21 (section 8.7), réponse attendue (mise en attente par la demande de l'étape 9b).
 - **Étape « boutons de contact en icônes » faite le 2026-11-21** (décision 77 : « Appeler », « WhatsApp », « E-mail » deviennent une icône avec son nom dessous). Tests sur l'ordinateur réussis ; **test sur smartphone à faire par le propriétaire**.
 - **Étape « accueil épuré » terminée le 2026-11-20** (décisions 74 à 76 : une ligne par produit, fiche dans un panneau, bouton rond, barre de navigation, ⚙ ; haut des écrans figé ; bouton retour du téléphone ; partie figée réduite). Tests sur l'ordinateur réussis ; version `0.15.0` essayée sur smartphone par le propriétaire : réussi.
@@ -1528,7 +1564,9 @@ Les règles de conception de la section 7 restent à respecter dans toute la sui
 
 *(Mise à jour du 2026-11-21, après la phase 9.)* Phases 8b, recherche dans l'historique et 9 faites ; seule la phase 9 attend encore l'essai du propriétaire sur son téléphone. **Prochaine action :** (1) le propriétaire fait **Push origin** et essaie l'export sur son téléphone (guide : « Version 0.18.0 » dans Paramètres ; bloc « Sauvegarde » ; « Exporter le stock (Excel) » ; ouvrir le fichier depuis « Téléchargements » ; vérifier les quatre feuilles, les dates, les nombres et les flèches de filtre, par exemple filtrer l'historique sur un produit) ; (2) ensuite, **phase 10, application installable (PWA)** : commencer par expliquer au propriétaire ce qui va changer (manifeste, icônes, service worker qui garde les fichiers de l'application, dont SheetJS, jamais les échanges avec Firebase ; bouton « Nouvelle version disponible ») et les questions éventuelles (icône d'application à partir du logo, nom court « MinStock »), puis attendre son accord.
 
-*(Mise à jour du 2026-11-22 : phase 11 terminée, essai de la version 0.23.0 réussi sur le téléphone selon le propriétaire. Phase 12 présentée au propriétaire le même jour, accord attendu avant de commencer.)*
+*(Mise à jour du 2026-11-22, après l'audit de la phase 12.)* **Audit fait, rapport présenté au propriétaire ; réponses attendues** : (1) MinStock est-elle réservée au propriétaire (et à ses employés) ? Si oui : bloquer la création de comptes (console Firebase › Authentication › Paramètres › Actions des utilisateurs) et retirer « Créer un compte » de l'application ; (2) guide pour restreindre la clé d'API (console Google Cloud › API et services › Identifiants) ; (3) petite retouche de l'en-tête à 320 pixels ; (4) essai à deux appareils sur le même produit, à faire avec le propriétaire. Noter les choix en décisions **101 et suivantes**, puis la phase 13.
+
+*(Mise à jour du 2026-11-22 : phase 11 terminée, essai de la version 0.23.0 réussi sur le téléphone selon le propriétaire. Phase 12 présentée au propriétaire le même jour ; accord : « Oui lance le, faites aussi un security scan complet ».)*
 
 *(Mise à jour du 2026-11-22, après la phase 11.)* **Phase 11 faite (option A, décision 100), version 0.23.0 ; essai sur le téléphone à faire par le propriétaire** : **Push origin** ; ouvrir MinStock : bandeau « Nouvelle version disponible » › « Mettre à jour » ; « Version 0.23.0 » en bas de Paramètres. Le guide n'apparaît que dans un entrepôt sans produit : pour le voir, créer un compte d'essai (autre adresse e-mail) sur le téléphone, ou se contenter de la capture d'écran envoyée. **Ensuite : phase 12, audit final de sécurité** (section 2 : rapport classé par gravité sur les règles, les doublons, les nombres, la suppression, le hors-ligne, l'export, le mobile et les secrets ; App Check évalué ; `tests-regles.html` et `tests-nombres.html` rejoués ; essai à deux appareils sur le même produit) : expliquer au propriétaire, puis attendre son accord ; décisions **101 et suivantes**.
 
