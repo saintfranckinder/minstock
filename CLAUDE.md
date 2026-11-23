@@ -96,7 +96,7 @@ L'application gère un seul entrepôt par compte utilisateur.
 7. Formulaire simple pour ajouter ou modifier un produit. Phase 8b (décisions 78 à 82) : code SKU (champ toujours présent, facultatif à remplir, unique quand il est rempli), type de stock (liste fixe, « Non classé » par défaut), quantité à commander et prix de vente facultatifs ; avertissement si le prix de vente est plus bas que le prix d'achat. La fiche du produit affiche ces informations et la marge par unité.
 8. Historique des entrées, sorties et ajustements, avec date, heure, produit, quantité et motif (50 derniers, puis « Voir plus »). Chaque ligne propose « Annuler cette opération » (section 6, règle 12). Recherche par produit, type, motif ou référence du bon (à partir de 4 caractères) dans les mouvements déjà chargés, sans lecture de plus (décisions 84 et 92). Chaque ligne a aussi un bouton « Imprimer » : bon du mouvement (un mouvement = un produit), ouvert dans la fenêtre d'impression du navigateur (imprimante ou PDF), mise en page épurée et symétrique pensée pour le papier ; il ne fait que lire ce qui est déjà chargé (étape 9b, décisions 89 à 91).
 9. Export Excel en un clic, avec quatre feuilles : `Stock`, `Historique`, `Fournisseurs` et `Clients` ; toujours complet (produits archivés compris), avec les boutons de filtre d'Excel ; bouton dans Paramètres (bloc « Sauvegarde ») et sur l'écran « Supprimer mon compte » (phase 9, décisions 85 à 88).
-10. Données de démonstration, uniquement lorsque l'entrepôt est vide.
+10. Guide « Premiers pas » sur l'accueil quand l'entrepôt n'a aucun produit (phase 11, décision 100) : il remplace les données de démonstration, qui seraient restées pour toujours dans l'historique (les mouvements ne s'effacent jamais). Rien n'est écrit dans le compte.
 11. Indicateur de l'état de connexion et de synchronisation (voir section 7).
 12. Paramètres : modifier le nom de l'entrepôt. La devise n'est modifiable que si l'entrepôt ne contient encore aucun produit (changer la devise ne convertit pas les montants).
 13. Bouton « Supprimer mon compte et mes données », avec double confirmation (voir section 8).
@@ -112,7 +112,7 @@ L'application gère un seul entrepôt par compte utilisateur.
 4. Export Excel.
 5. Installation sur téléphone (PWA).
 6. Carnets de fournisseurs et de clients.
-7. Données de démonstration.
+7. Guide « Premiers pas » (à la place des données de démonstration, décision 100).
 
 ### Hors périmètre de la première version
 

@@ -579,6 +579,58 @@ select:disabled {
   font-weight: 600;
 }
 
+/* Guide « Premiers pas » de l'accueil vide (phase 11, décision 100) : une
+   carte claire, quatre étapes numérotées dans des pastilles dorées (texte
+   bleu nuit, comme partout où le doré sert de fond). */
+.premiers-pas {
+  margin: 0 0 1rem;
+  padding: 1rem 1rem 0.25rem;
+  background: linear-gradient(180deg, var(--carte) 0%, var(--carte-bas) 100%);
+  border: 1px solid rgba(33, 53, 71, 0.08);
+  border-radius: var(--rayon-carte);
+  box-shadow: var(--ombre-carte);
+}
+
+.premiers-pas h3 {
+  margin: 0 0 0.75rem;
+}
+
+.premiers-pas-etapes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: etape;
+}
+
+.premiers-pas-etapes li {
+  position: relative;
+  margin: 0 0 0.875rem;
+  padding-left: 2.5rem;
+  counter-increment: etape;
+}
+
+.premiers-pas-etapes li::before {
+  content: counter(etape);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: var(--or-haut);
+  color: var(--principal);
+  font-family: var(--police-titres);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.premiers-pas-etapes strong {
+  color: var(--principal);
+}
+
 .produit .bouton {
   margin-top: 0.75rem;
 }

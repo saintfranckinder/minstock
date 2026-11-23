@@ -25,6 +25,7 @@ Le projet est en cours de construction. L'avancement est suivi dans `PLAN.md`.
 - Indicateur de synchronisation en haut de l'écran ; avertissement avant de se déconnecter s'il reste des modifications non envoyées ; effacement des données de l'appareil (appareil partagé).
 - Accueil épuré : une ligne par produit, fiche du produit dans un panneau qui monte du bas, barre de navigation en bas (Stock, Mouvements, Fournisseurs, Clients), Paramètres derrière l'icône ⚙.
 - S'installer sur le téléphone comme une application (icône MinStock, plein écran) et se rouvrir sans Internet après une première visite (phase 10).
+- Guide « Premiers pas » sur l'accueil d'un entrepôt sans produit : quatre étapes (ajouter un produit, faire une entrée ou une sortie, suivre les mouvements, sauvegarder). Il remplace les données de démonstration : rien n'est écrit dans le compte (phase 11, décision 100).
 
 ## Application installable et mises à jour (phase 10)
 

@@ -324,10 +324,31 @@
         <p id="filtre-texte" class="filtre-texte" tabindex="-1"></p>
         <button type="button" id="bouton-tout-afficher" class="bouton bouton-secondaire">Tout afficher</button>
       </div>
-      <p id="produits-vide" class="aide" hidden>
-        Aucun produit pour l'instant. Touchez le bouton « + » en bas à droite
-        pour ajouter votre premier produit.
-      </p>
+      <!-- Premiers pas (phase 11, décision 100) : seulement quand l'entrepôt
+           n'a aucun produit actif ; rien n'est écrit dans le compte. -->
+      <section id="produits-vide" class="premiers-pas" aria-labelledby="titre-premiers-pas" hidden>
+        <h3 id="titre-premiers-pas">Premiers pas</h3>
+        <ol class="premiers-pas-etapes">
+          <li>
+            <strong>Ajoutez un produit</strong> avec le bouton «&nbsp;+&nbsp;» en
+            bas à droite : nom, unité (sac, kg, pièce…), stock de départ et prix
+            d'achat.
+          </li>
+          <li>
+            <strong>Faites une entrée ou une sortie</strong> : touchez le
+            produit, puis «&nbsp;Mouvement de stock&nbsp;», ou utilisez
+            «&nbsp;+1&nbsp;» et «&nbsp;−1&nbsp;».
+          </li>
+          <li>
+            <strong>Suivez vos opérations</strong> dans «&nbsp;Mouvements&nbsp;»,
+            en bas de l'écran : chacune peut y être annulée ou imprimée.
+          </li>
+          <li>
+            <strong>Sauvegardez</strong> : ⚙ › Paramètres › «&nbsp;Exporter le
+            stock (Excel)&nbsp;».
+          </li>
+        </ol>
+      </section>
       <p id="recherche-aucun" class="aide" role="status" hidden></p>
       <ul id="liste-produits" class="liste-produits liste-compacte"></ul>
       <!-- Annonces des boutons « +1 » / « −1 » pour les lecteurs d'écran -->
