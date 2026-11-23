@@ -80,7 +80,7 @@ L'application gère un seul entrepôt par compte utilisateur.
 
 ### Écrans et fonctions
 
-1. Connexion (Google ou e-mail et mot de passe), inscription et mot de passe oublié.
+1. Connexion (Google ou e-mail et mot de passe) et mot de passe oublié. Inscriptions fermées (décision 101) : le propriétaire crée les comptes de ses amis dans la console Firebase ; l'écran d'inscription reste dans le code, sans lien.
 2. Premier lancement : nom de l'entrepôt et choix d'une devise.
 3. Tableau de bord listant les produits :
    - Nom.
@@ -100,7 +100,7 @@ L'application gère un seul entrepôt par compte utilisateur.
 11. Indicateur de l'état de connexion et de synchronisation (voir section 7).
 12. Paramètres : modifier le nom de l'entrepôt. La devise n'est modifiable que si l'entrepôt ne contient encore aucun produit (changer la devise ne convertit pas les montants).
 13. Bouton « Supprimer mon compte et mes données », avec double confirmation (voir section 8).
-14. Court texte de confidentialité accessible depuis l'écran de connexion : données collectées (adresse e-mail, nom du compte Google le cas échéant, données de stock, coordonnées des fournisseurs et des clients saisies par l'utilisateur), usage, absence de revente ou de partage, possibilité de supprimer son compte.
+14. Court texte de confidentialité accessible depuis l'écran de connexion : données collectées (adresse e-mail, nom du compte Google le cas échéant, données de stock, coordonnées des fournisseurs et des clients saisies par l'utilisateur), usage, absence de revente ou de partage, possibilité de supprimer son compte ; qui peut voir les données (décision 101 : jamais les autres comptes ; techniquement le propriétaire de MinStock dans la console, avec son engagement ; les mots de passe, personne).
 15. Carnet de fournisseurs (phase 6b, décisions 42 et 50 à 54) : ajouter, modifier et supprimer un fournisseur, avec nom, téléphone, WhatsApp, e-mail, adresse, produits fournis et notes ; recherche par nom ou par produit fourni ; boutons « Appeler », « WhatsApp » et « E-mail » (une icône avec son nom dessous, décision 77) qui ouvrent l'application correspondante du téléphone. Le carnet est indépendant du stock : il ne crée ni ne modifie aucun mouvement.
 16. Carnet de clients (phase 6c, décisions 72 et 73) : même fonctionnement que le carnet de fournisseurs, avec nom, téléphone, WhatsApp, e-mail, adresse et notes (pas de case VIP : « VIP » peut s'écrire dans les notes) ; recherche par nom ou dans les notes. Indépendant du stock ; aucune gestion des ventes.
 

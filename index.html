@@ -115,8 +115,14 @@
         <button type="submit" id="bouton-connexion" class="bouton bouton-principal">Se connecter</button>
       </form>
 
+      <!-- Inscriptions fermées (décision 101) : les comptes sont créés par le
+           propriétaire dans la console Firebase. L'écran d'inscription reste
+           plus bas, sans lien qui y mène. -->
+      <p class="aide aide-sans-compte">
+        Pas encore de compte ? Demandez-en un au propriétaire de MinStock.
+      </p>
+
       <nav class="liens" aria-label="Autres actions">
-        <button type="button" class="lien" data-aller="vue-inscription">Créer un compte</button>
         <button type="button" class="lien" data-aller="vue-oubli">Mot de passe oublié ?</button>
         <button type="button" class="lien" data-aller="vue-confidentialite">Confidentialité</button>
       </nav>
@@ -206,6 +212,20 @@
         vous. Elles ne sont ni vendues, ni partagées, ni utilisées pour de la
         publicité. Chaque compte ne voit que ses propres données.
       </p>
+
+      <!-- Qui peut voir les données (décision 101) -->
+      <h3>Qui peut voir vos données ?</h3>
+      <ul>
+        <li>Les autres utilisateurs de MinStock : jamais.</li>
+        <li>
+          Le propriétaire de MinStock, qui gère le service et crée les comptes
+          dans la console Firebase, peut techniquement voir l'adresse e-mail de
+          chaque compte, ses dates de création et de dernière connexion, et les
+          données enregistrées. Le propriétaire s'engage à ne pas les consulter,
+          sauf à votre demande pour vous aider, et à ne jamais les partager.
+        </li>
+        <li>Votre mot de passe : personne, pas même le propriétaire de MinStock.</li>
+      </ul>
 
       <h3>Où sont-elles conservées ?</h3>
       <p>

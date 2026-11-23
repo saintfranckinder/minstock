@@ -17,7 +17,12 @@ const MESSAGES = {
   'auth/invalid-email': 'Cette adresse e-mail n’est pas valide.',
   'auth/missing-email': 'Saisissez votre adresse e-mail.',
   'auth/missing-password': 'Saisissez votre mot de passe.',
-  'auth/user-disabled': 'Ce compte a été désactivé.',
+  'auth/user-disabled': 'Ce compte a été désactivé. Contactez le propriétaire de MinStock.',
+  // Inscriptions fermées (décision 101) : inscription refusée par le serveur,
+  // ou première connexion avec un compte Google qui n'a pas de compte MinStock.
+  'auth/admin-restricted-operation':
+    'Ce compte n’existe pas dans MinStock : les inscriptions sont fermées. ' +
+    'Demandez au propriétaire de MinStock de vous créer un compte.',
   'auth/too-many-requests': 'Trop de tentatives. Patientez quelques minutes, puis réessayez.',
 
   // Inscription

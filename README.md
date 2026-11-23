@@ -8,7 +8,7 @@ Le projet est en cours de construction. L'avancement est suivi dans `PLAN.md`.
 
 ## Ce que l'application fait pour l'instant
 
-- Créer un compte et se connecter, avec Google ou avec une adresse e-mail et un mot de passe.
+- Se connecter, avec Google ou avec une adresse e-mail et un mot de passe. Les inscriptions sont fermées : le propriétaire crée les comptes de ses amis dans la console Firebase (décision 101, voir « Gérer les comptes »).
 - Demander un nouveau mot de passe (« Mot de passe oublié »).
 - Créer son entrepôt au premier lancement : nom et devise.
 - Afficher le texte de confidentialité depuis l'écran de connexion.
@@ -201,6 +201,22 @@ Contenu (décisions 85 à 88), toujours complet :
 Dans Excel, la ligne de titres de chaque feuille a des **flèches de filtre** : par exemple, dans « Historique », touchez la flèche de « Produit » et ne cochez que « Riz » pour ne voir que ses mouvements. Les quantités et les montants sont de vrais nombres : Excel peut les additionner.
 
 Sans Internet, l'application prévient et propose de créer le fichier avec la copie gardée sur l'appareil, qui peut être incomplète. Chaque export lit toutes les données du compte (une lecture par produit, mouvement, fournisseur et client, sur la limite gratuite de 50 000 par jour).
+
+## Gérer les comptes (inscriptions fermées)
+
+MinStock est partagée avec quelques amis. Personne ne peut créer de compte soi-même : c'est le propriétaire qui les crée (décision 101). Chaque compte a son propre entrepôt ; aucun compte ne voit les données d'un autre.
+
+**Fermer les inscriptions (une seule fois) :** console Firebase › **Authentication** › onglet **Paramètres** › **Actions des utilisateurs** › décocher **« Activer la création (inscription) »** › Enregistrer. Le serveur refuse alors toute inscription, même envoyée directement, et la première connexion Google d'un compte inconnu. Si cette case n'apparaît pas, **ne pas** accepter de passer à « Identity Platform » (passage sans retour) : demander à l'assistant la solution de remplacement par les règles.
+
+| Pour… | Dans la console Firebase |
+|---|---|
+| Ajouter un ami | **Authentication › Utilisateurs › Ajouter un utilisateur** : son adresse e-mail et un mot de passe provisoire. L'ami ouvre le lien de MinStock, touche **« Mot de passe oublié »**, reçoit l'e-mail et choisit son propre mot de passe. Au premier lancement, l'ami crée son entrepôt (nom et devise). |
+| Bloquer un ami | Sur sa ligne, menu ⋮ › **Désactiver le compte**. Réversible (« Activer le compte ») ; ses données restent. MinStock lui affiche « Ce compte a été désactivé. Contactez le propriétaire de MinStock. » |
+| Supprimer complètement | D'abord, l'ami touche **« Supprimer mon compte »** dans MinStock (Paramètres) : cela efface ses données. Supprimer seulement le compte dans la console laisserait ses données dans la base. |
+
+- Les amis se connectent par **adresse e-mail et mot de passe** : « Continuer avec Google » demanderait que Google crée un compte, ce qui est refusé (message « les inscriptions sont fermées »).
+- **Qui voit quoi :** dans la console, le propriétaire peut techniquement voir l'adresse e-mail de chaque compte, ses dates de création et de dernière connexion, et les données enregistrées (stock, historique, fournisseurs, clients) ; jamais les mots de passe. Le texte « Confidentialité » de l'application le dit, avec l'engagement de ne pas consulter ces données sans demande et de ne jamais les partager.
+- L'écran « Créer un compte » reste dans le code, sans lien qui y mène : pour rouvrir les inscriptions, recocher la case dans la console et remettre le lien.
 
 ## Supprimer son compte
 
