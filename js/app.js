@@ -7,6 +7,7 @@ import {
   connecterAvecMotDePasse,
   creerCompte,
   envoyerReinitialisation,
+  preparerConnexionGoogle,
   seDeconnecter,
   surveillerConnexion
 } from './auth.js';
@@ -726,6 +727,10 @@ function brancherNavigation() {
   element('bouton-parametres').addEventListener('click', () => quitterLesCarnets('vue-parametres'));
   document.addEventListener('vue-changee', mettreAJourNavigation);
   document.addEventListener('vue-changee', synchroniserHistorique);
+  // Fenêtre Google préparée à l'avance sur les écrans qui la proposent
+  // (décision 99), et de nouveau au retour d'Internet.
+  document.addEventListener('vue-changee', preparerGoogleSiUtile);
+  window.addEventListener('online', preparerGoogleSiUtile);
   window.addEventListener('popstate', surRetourDuTelephone);
   suivreHauteurEntete();
 
@@ -741,6 +746,16 @@ function brancherNavigation() {
 }
 
 // ---------- Démarrage ----------
+
+// Écrans où l'on peut toucher un bouton Google : connexion, inscription, et
+// reconnexion avant la suppression du compte (décision 99).
+const VUES_AVEC_GOOGLE = ['vue-connexion', 'vue-inscription', 'vue-suppression', 'vue-suppression-en-cours'];
+
+function preparerGoogleSiUtile() {
+  if (firebase && VUES_AVEC_GOOGLE.includes(vueActuelle())) {
+    preparerConnexionGoogle(firebase.auth);
+  }
+}
 
 // Vrai si MinStock est ouverte comme application installée (plein écran,
 // sans barre d'adresse), et non dans un onglet du navigateur.

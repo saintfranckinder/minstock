@@ -12,7 +12,7 @@
 // Numéro de version : DOIT être égal à celui de js/version.js (vérifié par
 // tests-nombres.html). À changer à chaque publication : le navigateur ne
 // détecte une nouvelle version que si ce fichier change.
-const VERSION = '0.22.0';
+const VERSION = '0.22.1';
 
 // Bibliothèques copiées dans vendor/ (décision 16) : elles ne changent
 // qu'avec leur propre version. Gardées à part et téléchargées une seule fois,

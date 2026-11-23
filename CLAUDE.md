@@ -252,6 +252,7 @@ Principe à appliquer, puis à vérifier avec la page de test `tests-regles.html
 - Ne pas supprimer automatiquement les données locales ou les mouvements en attente.
 - Prévoir un indicateur compréhensible de l'état de synchronisation (section 7).
 - Phase 10 (décisions 94 à 98) : `manifest.webmanifest` et icônes PNG ; `service-worker.js` (script classique) qui garde seulement les fichiers de l'application (cache nommé avec la version, bibliothèques de `vendor/` dans un cache à part), jamais les échanges avec Firebase ni les pages de test ; bandeau « Nouvelle version disponible » avec « Mettre à jour », jamais de rechargement automatique ; aide « Installer MinStock » dans Paramètres, pas de bouton d'installation. **À chaque publication : changer le numéro de version dans `js/version.js` et dans `service-worker.js`** (vérifié par `tests-nombres.html`), et ajouter tout nouveau fichier de l'application à la liste de `service-worker.js`.
+- Démarrage de Firebase Auth (décision 99) : `initializeAuth` sans préparer la connexion Google (pas de `getAuth`, qui bloquait l'ouverture hors ligne) ; `browserPopupRedirectResolver` passé à chaque appel de fenêtre Google, préparée en arrière-plan sur les écrans qui la proposent ; vérification du compte limitée à 4 secondes pendant le démarrage seulement.
 
 ## 10. Export et sauvegarde
 
